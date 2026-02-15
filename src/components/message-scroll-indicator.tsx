@@ -53,7 +53,7 @@ const MessageStrip = React.memo(
                     <button
                         onClick={() => onScrollToMessage(index)}
                         className={cn(
-                            "py-1.5 md:py-1.5 px-1 md:px-1 rounded-md transition-all duration-300 ease-out relative overflow-visible group w-full hover:bg-muted/30",
+                            "py-1.5 md:py-1.5 px-1 md:px-1 rounded-md transition-all duration-300 ease-out relative overflow-visible group w-full hover:bg-muted hover:opacity-30",
                             isAssistant && "flex justify-start",
                             isUser && "flex justify-end",
                         )}
@@ -66,8 +66,8 @@ const MessageStrip = React.memo(
                                 isAssistant && "w-[70%]",
                                 isUser && "w-full",
                                 index === activeIndex
-                                    ? "bg-primary h-[4px] shadow-lg shadow-primary/30"
-                                    : "bg-muted-foreground/20 group-hover:bg-muted-foreground/50 group-hover:h-[3.5px]",
+                                    ? "bg-primary h-[4px] shadow-lg shadow-primary opacity-30"
+                                    : "bg-muted-foreground opacity-20 group-hover:bg-muted-foreground group-hover:opacity-50 group-hover:h-[3.5px]",
                             )}
                         >
                             {/* Shine effect on hover */}
@@ -75,7 +75,7 @@ const MessageStrip = React.memo(
 
                             {/* Active indicator glow */}
                             {index === activeIndex && (
-                                <span className="absolute inset-0 bg-primary/20 animate-pulse" />
+                                <span className="absolute inset-0 bg-primary opacity-20 animate-pulse" />
                             )}
                         </span>
                     </button>
@@ -119,8 +119,8 @@ const ScrollButton = React.memo(
                 className={cn(
                     "transition-all duration-200",
                     isVisible
-                        ? "text-muted-foreground/30 cursor-not-allowed"
-                        : "text-primary hover:text-primary/80 active:scale-90",
+                        ? "text-muted-foreground opacity-30 cursor-not-allowed"
+                        : "text-primary hover:text-primary hover:opacity-80 active:scale-90",
                 )}
                 aria-label={`Scroll to ${direction === "up" ? "top" : "bottom"}`}
             >
@@ -292,7 +292,7 @@ export const MessageScrollIndicator = React.memo(
         if (messageCount === 0) return null;
 
         return (
-            <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-2 md:gap-2 p-2 md:p-2.5 rounded-l-xl bg-background/90 backdrop-blur-xl border-2 border-r-0 border-border/50 shadow-2xl shadow-primary/5 min-w-[40px] md:min-w-[45px] hover:shadow-primary/10 transition-shadow duration-300 max-w-[40px] md:max-w-[45px]">
+            <div className="fixed right-0 top-1/2 -translate-y-1/2 z-50 flex flex-col items-center gap-2 md:gap-2 p-2 md:p-2.5 rounded-l-xl bg-background opacity-90 backdrop-blur-xl border-2 border-r-0 border-border shadow-2xl min-w-[40px] md:min-w-[45px] hover:opacity-100 transition-shadow duration-300 max-w-[40px] md:max-w-[45px]">
                 {/* Scroll to Top Button */}
                 <ScrollButton
                     isVisible={isTopVisible}
@@ -301,7 +301,7 @@ export const MessageScrollIndicator = React.memo(
                 />
 
                 {/* Separator */}
-                <div className="w-full h-[1px] bg-border/30" />
+                <div className="w-full h-[1px] bg-border opacity-30" />
 
                 <div className="flex flex-col gap-1 md:gap-0.5 w-full">
                     {messages.map((message, index) => (
@@ -316,7 +316,7 @@ export const MessageScrollIndicator = React.memo(
                 </div>
 
                 {/* Separator */}
-                <div className="w-full h-[1px] bg-border/30" />
+                <div className="w-full h-[1px] bg-border opacity-30" />
 
                 {/* Scroll to Bottom Button */}
                 <ScrollButton

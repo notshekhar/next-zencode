@@ -40,7 +40,7 @@ export function ThinkingSelector() {
                 pressed={isEnabled}
                 onPressedChange={toggleThinking}
                 size="sm"
-                className="h-8 px-2 rounded-lg data-[state=on]:bg-primary/10 data-[state=on]:text-primary"
+                className="h-8 px-2 rounded-lg data-[state=on]:bg-primary data-[state=on]:opacity-10 data-[state=on]:text-primary"
             >
                 <Brain className="size-3.5" />
             </Toggle>
