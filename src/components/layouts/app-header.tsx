@@ -16,6 +16,8 @@ import {
 } from "@/components/ui/tooltip";
 import { Toggle } from "@/components/ui/toggle";
 
+import { ConnectButton } from "@/components/connect-button";
+
 export function AppHeader() {
     const { toggleSidebar } = useSidebar();
     const currentPaths = usePathname();
@@ -62,7 +64,9 @@ export function AppHeader() {
 
             {componentByPage}
 
-            <div className="flex-1 md:hidden" />
+            <div className="flex-1" />
+
+            <ConnectButton />
         </header>
     );
 }

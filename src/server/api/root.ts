@@ -7,6 +7,7 @@ import { permissionsRouter } from "./routers/permissions";
 import { lspRouter } from "./routers/lsp";
 import { upgradeRouter } from "./routers/upgrade";
 import { healthRouter } from "./routers/health";
+import { apiKeysRouter } from "./routers/apiKeys";
 
 export const appRouter = createTRPCRouter({
     health: healthRouter,
@@ -17,6 +18,7 @@ export const appRouter = createTRPCRouter({
     permissions: permissionsRouter,
     lsp: lspRouter,
     upgrade: upgradeRouter,
+    apiKeys: apiKeysRouter,
 });
 
 export type AppRouter = typeof appRouter;
