@@ -60,12 +60,12 @@ export const ToolWrapper = memo(
         }, []);
 
         return (
-            <div className="my-1 w-full max-w-full border border-border rounded-xl bg-card">
+            <div className="my-1 w-full max-w-full border border-border rounded-xl bg-card overflow-hidden">
                 <button
                     type="button"
                     onClick={isCollapsible ? toggleExpand : undefined}
                     className={cn(
-                        "flex items-center gap-2.5 w-full text-left px-3 py-2 rounded-lg transition-colors",
+                        "flex items-center gap-2.5 w-full text-left px-3 py-2 transition-colors",
                         isCollapsible && "hover:bg-muted cursor-pointer",
                         !isCollapsible && "cursor-default",
                         "group",
@@ -115,7 +115,7 @@ export const ToolWrapper = memo(
 
                 {/* Always-expanded content */}
                 {alwaysExpanded && hasExpandableContent && (
-                    <div className="ml-[3.25rem] mt-1 mb-2">{children}</div>
+                    <div className="px-3 pb-3">{children}</div>
                 )}
 
                 {/* Collapsible content */}
@@ -129,7 +129,7 @@ export const ToolWrapper = memo(
                             transition={{ duration: 0.2, ease: "easeInOut" }}
                             className="overflow-hidden"
                         >
-                            <div className="ml-[3.25rem] mt-1 mb-2">
+                            <div className="px-3 pb-3">
                                 {children}
                             </div>
                         </motion.div>

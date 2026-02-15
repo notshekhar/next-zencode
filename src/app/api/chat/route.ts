@@ -12,11 +12,12 @@ interface ChatRequestBody {
     trigger?: "submit-message" | "regenerate-message";
     abortSignal?: AbortSignal; // Note: Next.js Request signal is usually used, but we might pass it differently
     mode?: AgentMode;
+    selectedSkillNames?: string[];
 }
 
 export async function POST(req: Request) {
     const body = (await req.json()) as ChatRequestBody;
-    const { messages, message, threadId, trigger, mode } = body;
+    const { messages, message, threadId, trigger, mode, selectedSkillNames } = body;
 
     const status = getServiceStatus();
     if (!status.ready) {
@@ -41,6 +42,7 @@ export async function POST(req: Request) {
             trigger: trigger || "submit-message",
             signal: req.signal,
             mode: mode || "build",
+            selectedSkillNames: selectedSkillNames || [],
         });
 
         return createUIMessageStreamResponse({ stream });

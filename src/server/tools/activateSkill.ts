@@ -4,7 +4,7 @@ import * as path from "path";
 import { skillService } from "../services/skillService";
 import { withToolScheduling } from "../services/toolExecutionScheduler";
 
-interface ActivateSkillResult {
+interface UseSkillResult {
     success: boolean;
     message: string;
     llmContent?: string;
@@ -12,20 +12,16 @@ interface ActivateSkillResult {
 }
 
 function buildInputSchema(availableSkillNames: string[]) {
-    if (availableSkillNames.length === 0) {
-        return z.object({
-            name: z.string().describe("No skills are currently available."),
-        });
-    }
+    const description = availableSkillNames.length > 0
+        ? `The name of the skill to use. Available: ${availableSkillNames.join(", ")}`
+        : "The name of the skill to use.";
 
     return z.object({
-        name: z
-            .enum(availableSkillNames as [string, ...string[]])
-            .describe("The name of the skill to activate."),
+        name: z.string().describe(description),
     });
 }
 
-export function createActivateSkillTool(projectDir?: string) {
+export function createUseSkillTool(projectDir?: string) {
     const availableSkills = skillService.getAllSkills(projectDir);
     const availableSkillNames = availableSkills.map((skill) => skill.name);
     const availableHint =
@@ -34,9 +30,9 @@ export function createActivateSkillTool(projectDir?: string) {
             : "";
 
     return tool({
-        description: `Activate a specialized skill by name and return its instructions in <activated_skill> tags.${availableHint}`,
+        description: `Load a specialized skill by name and return its instructions. Use this after discovering skills via listSkills.${availableHint}`,
         inputSchema: buildInputSchema(availableSkillNames),
-        execute: async ({ name }): Promise<ActivateSkillResult> =>
+        execute: async ({ name }): Promise<UseSkillResult> =>
             withToolScheduling("read", async () => {
                 const skill = skillService.getSkill(name, projectDir);
                 if (!skill) {
@@ -58,7 +54,7 @@ export function createActivateSkillTool(projectDir?: string) {
                     projectDir,
                 );
                 const skillDir = path.dirname(skill.location);
-                const llmContent = `<activated_skill name="${skill.name}">
+                const llmContent = `<skill name="${skill.name}">
   <instructions>
 ${skill.content}
   </instructions>
@@ -66,11 +62,11 @@ ${skill.content}
   <available_resources>
 ${resources || "(none)"}
   </available_resources>
-</activated_skill>`;
+</skill>`;
 
                 return {
                     success: true,
-                    message: `Skill "${skill.name}" activated from ${skillDir}`,
+                    message: `Skill "${skill.name}" loaded from ${skillDir}`,
                     llmContent,
                 };
             }),

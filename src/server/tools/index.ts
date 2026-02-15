@@ -7,7 +7,8 @@ export { searchFiles } from "./searchFiles";
 export { grepSearch } from "./grepSearch";
 export { taskManager } from "./taskManager";
 export { bashPlanMode } from "./bashPlanMode";
-export { createActivateSkillTool } from "./activateSkill";
+export { createUseSkillTool } from "./activateSkill";
+export { createListSkillsTool } from "./listSkills";
 
 // Export all tools as a single object
 import { bash } from "./bash";
@@ -19,7 +20,8 @@ import { searchFiles } from "./searchFiles";
 import { grepSearch } from "./grepSearch";
 import { taskManager } from "./taskManager";
 import { bashPlanMode } from "./bashPlanMode";
-import { createActivateSkillTool } from "./activateSkill";
+import { createUseSkillTool } from "./activateSkill";
+import { createListSkillsTool } from "./listSkills";
 import type { AgentMode } from "../shared/types";
 
 export interface ToolContext {
@@ -36,7 +38,8 @@ function buildBuildModeTools(context?: ToolContext) {
         searchFiles,
         grepSearch,
         taskManager,
-        activateSkill: createActivateSkillTool(context?.projectDir),
+        useSkill: createUseSkillTool(context?.projectDir),
+        listSkills: createListSkillsTool(context?.projectDir),
     };
 }
 
@@ -48,7 +51,8 @@ function buildPlanModeTools(context?: ToolContext) {
         searchFiles,
         grepSearch,
         taskManager,
-        activateSkill: createActivateSkillTool(context?.projectDir),
+        useSkill: createUseSkillTool(context?.projectDir),
+        listSkills: createListSkillsTool(context?.projectDir),
     };
 }
 

@@ -9,7 +9,8 @@ import { ListFilesTool } from "./tools/list-files-tool";
 import { SearchFilesTool } from "./tools/search-files-tool";
 import { GrepSearchTool } from "./tools/grep-search-tool";
 import { TaskManagerTool } from "./tools/task-manager-tool";
-import { ActivateSkillTool } from "./tools/activate-skill-tool";
+import { UseSkillTool } from "./tools/activate-skill-tool";
+import { ListSkillsTool } from "./tools/list-skills-tool";
 import { DefaultTool } from "./tools/default-tool";
 
 function getToolNameFromType(type: string): string {
@@ -37,7 +38,8 @@ const TOOL_COMPONENTS: Record<string, React.ComponentType<{ part: any }>> = {
     searchFiles: SearchFilesTool,
     grepSearch: GrepSearchTool,
     taskManager: TaskManagerTool,
-    activateSkill: ActivateSkillTool,
+    useSkill: UseSkillTool,
+    listSkills: ListSkillsTool,
 };
 
 export const ToolInvocationPart = memo(

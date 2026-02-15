@@ -19,6 +19,7 @@ import {
 import { useRouter } from "next/navigation";
 import { WriteIcon } from "./ui/write-icon";
 import { ModelSelector } from "./model-selector";
+import { SkillSelector } from "./skill-selector";
 
 interface ChatInputProps {
     onSend: (message: string) => void;
@@ -314,6 +315,7 @@ export const ChatInput = memo(
                                     <div className="flex-1" />
 
                                     <div className="flex items-center gap-[2px] justify-end shrink-0">
+                                        <SkillSelector disabled={isDisabled} />
                                         <ModelSelector disabled={isDisabled} />
 
                                         <SendButton

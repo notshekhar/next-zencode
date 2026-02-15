@@ -38,7 +38,30 @@ function generateSessionName(content: string): string {
     return name;
 }
 
-function renderAvailableSkills(skills: Skill[]): string {
+function renderActivatedSkills(skills: Skill[]): string {
+    if (skills.length === 0) {
+        return "";
+    }
+
+    const activatedXml = skills
+        .map(
+            (skill) => `<activated_skill name="${skill.name}">
+  <instructions>
+${skill.content}
+  </instructions>
+</activated_skill>`,
+        )
+        .join("\n\n");
+
+    return `
+# Activated Skills
+
+The following skills have been activated by the user. Follow their instructions as expert guidance for the current task.
+
+${activatedXml}`.trim();
+}
+
+function renderDiscoverableSkills(skills: Skill[]): string {
     if (skills.length === 0) {
         return "";
     }
@@ -48,24 +71,21 @@ function renderAvailableSkills(skills: Skill[]): string {
             (skill) => `  <skill>
     <name>${skill.name}</name>
     <description>${skill.description}</description>
-    <location>${skill.location}</location>
   </skill>`,
         )
         .join("\n");
 
     return `
-# Available Agent Skills
+# Other Available Skills
 
-You have access to the following specialized skills. When a task matches one of these descriptions, call the \`activateSkill\` tool with the exact skill name to load its detailed instructions.
+You also have access to these additional skills. Use the \`listSkills\` tool to see them all, and \`useSkill\` to load one by name.
 
-<available_skills>
+<discoverable_skills>
 ${skillsXml}
-</available_skills>
-
-Once a skill is activated, treat its \`<instructions>\` as expert guidance for the current task while continuing to follow core safety rules.`.trim();
+</discoverable_skills>`.trim();
 }
 
-function getSystemPrompt(mode: AgentMode, availableSkills: Skill[]): string {
+function getSystemPrompt(mode: AgentMode, activatedSkills: Skill[], discoverableSkills: Skill[]): string {
     const modeDescription =
         mode === "plan"
             ? `You are in PLAN mode. You can only:
@@ -153,9 +173,14 @@ LSP Diagnostics:
 
 Current working directory: ${process.cwd()}`;
 
-    const skillsPrompt = renderAvailableSkills(availableSkills);
-    if (skillsPrompt) {
-        prompt += `\n\n${skillsPrompt}`;
+    const activatedPrompt = renderActivatedSkills(activatedSkills);
+    if (activatedPrompt) {
+        prompt += `\n\n${activatedPrompt}`;
+    }
+
+    const discoverablePrompt = renderDiscoverableSkills(discoverableSkills);
+    if (discoverablePrompt) {
+        prompt += `\n\n${discoverablePrompt}`;
     }
 
     return prompt;
@@ -177,6 +202,7 @@ export interface ChatStreamOptions {
     trigger?: "submit-message" | "regenerate-message";
     signal?: AbortSignal;
     mode?: AgentMode;
+    selectedSkillNames?: string[];
 }
 
 export async function createChatStream(options: ChatStreamOptions) {
@@ -187,6 +213,7 @@ export async function createChatStream(options: ChatStreamOptions) {
         trigger = "submit-message",
         signal,
         mode = "build",
+        selectedSkillNames = [],
     } = options;
 
     if (!isModelConfigured()) {
@@ -247,7 +274,14 @@ export async function createChatStream(options: ChatStreamOptions) {
         saveUIMessage(threadId, message, { snapshot });
     }
 
-    const availableSkills = skillService.getAllSkills(process.cwd());
+    const allSkills = skillService.getAllSkills(process.cwd());
+    const activatedSkills =
+        selectedSkillNames && selectedSkillNames.length > 0
+            ? allSkills.filter((s) => selectedSkillNames.includes(s.name))
+            : [];
+    const discoverableSkills = allSkills.filter(
+        (s) => !selectedSkillNames?.includes(s.name),
+    );
 
     const activeTools = getToolsForMode(mode, { projectDir: process.cwd() });
 
@@ -255,7 +289,7 @@ export async function createChatStream(options: ChatStreamOptions) {
         execute: async ({ writer }) => {
             const textStream = streamText({
                 model,
-                system: getSystemPrompt(mode, availableSkills),
+                system: getSystemPrompt(mode, activatedSkills, discoverableSkills),
                 messages: modelMessages,
                 tools: activeTools,
                 stopWhen: stepCountIs(200),

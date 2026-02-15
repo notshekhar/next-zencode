@@ -64,3 +64,9 @@ export const chatModeAtom = atomWithStorage<ChatMode>(
     "zencode-chat-mode",
     "build",
 );
+
+// Skills atoms
+export const selectedSkillsAtom = atomWithStorage<string[]>(
+    "zencode-selected-skills",
+    [],
+);

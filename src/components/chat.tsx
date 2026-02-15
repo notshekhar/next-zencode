@@ -12,6 +12,7 @@ import {
     selectedThinkingConfigAtom,
     replyContextAtom,
     chatModeAtom,
+    selectedSkillsAtom,
 } from "@/store";
 import { v7 } from "uuid";
 import { errorToast } from "@/hooks/errorToast";
@@ -40,6 +41,7 @@ export const Chat = React.memo(
         const selectedThinkingConfig = useAtomValue(selectedThinkingConfigAtom);
         const [replyContext, setReplyContext] = useAtom(replyContextAtom);
         const chatMode = useAtomValue(chatModeAtom);
+        const selectedSkills = useAtomValue(selectedSkillsAtom);
 
         // Use a ref to always get the latest selected model value
         const selectedModelRef = useRef(selectedModel);
@@ -50,6 +52,9 @@ export const Chat = React.memo(
 
         const chatModeRef = useRef(chatMode);
         chatModeRef.current = chatMode;
+
+        const selectedSkillsRef = useRef(selectedSkills);
+        selectedSkillsRef.current = selectedSkills;
 
         const { messages, sendMessage, status, stop, error, regenerate } =
             useChat({
@@ -63,6 +68,7 @@ export const Chat = React.memo(
                             selectedThinkingConfig:
                                 selectedThinkingConfigRef.current,
                             mode: chatModeRef.current,
+                            selectedSkillNames: selectedSkillsRef.current,
                         };
                     },
 
