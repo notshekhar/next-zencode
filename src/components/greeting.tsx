@@ -2,8 +2,6 @@
 
 import { ChatInput } from "./chat-input";
 import { useState, useEffect } from "react";
-import Link from "next/link";
-import { Zap, Target, Clock } from "lucide-react";
 
 const greetingMessageKeys = [
     "Good Morning",
