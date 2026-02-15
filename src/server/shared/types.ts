@@ -72,4 +72,5 @@ export interface DetailedModel {
     };
     description?: string;
     iconUrl?: string;
+    isDefault?: boolean;
 }

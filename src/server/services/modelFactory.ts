@@ -1,7 +1,9 @@
 import { google } from "@ai-sdk/google";
 import { groq } from "@ai-sdk/groq";
+import { createOllama } from "ollama-ai-provider-v2";
 import type { LanguageModel } from "ai";
 import { configService, type ProviderType } from "./configService";
+import { getOllamaModels } from "./ollama.service";
 
 import { DetailedModel } from "../shared/types";
 
@@ -17,6 +19,7 @@ const MODELS: DetailedModel[] = [
         },
         description: "Next-gen flash model from Google",
         iconUrl: "https://models.dev/logos/google.svg",
+        isDefault: true,
     },
     {
         id: "gemini-3-pro",
@@ -44,8 +47,12 @@ const MODELS: DetailedModel[] = [
     },
 ];
 
-export function getModel(modelId?: string): LanguageModel {
-    const model = modelId ? MODELS.find((m) => m.id === modelId) : undefined;
+export async function getModel(modelId?: string): Promise<LanguageModel> {
+    const ollamaUrl = configService.getProviderApiKey("ollama") || "http://localhost:11434";
+    const ollamaModels = await getOllamaModels(ollamaUrl);
+    const allModels = [...MODELS, ...ollamaModels];
+
+    const model = modelId ? allModels.find((m) => m.id === modelId) : undefined;
 
     let selectedModel: DetailedModel;
 
@@ -55,7 +62,7 @@ export function getModel(modelId?: string): LanguageModel {
         // Fallback to active provider's first model if no ID or ID not found
         const activeProvider = configService.getActiveProvider();
         selectedModel =
-            MODELS.find((m) => m.provider.id === activeProvider) || MODELS[0];
+            allModels.find((m) => m.provider.id === activeProvider) || MODELS[0];
     }
 
     const providerId = selectedModel.provider.id as ProviderType;
@@ -101,7 +108,9 @@ function createModelForProvider(model: DetailedModel): LanguageModel {
             throw new Error("Anthropic provider not yet implemented");
 
         case "ollama":
-            throw new Error("Ollama provider not yet implemented");
+            const ollamaUrl = configService.getProviderApiKey("ollama") || "http://localhost:11434";
+            const ollama = createOllama({ baseURL: ollamaUrl + "/api" });
+            return ollama(targetModelId);
 
         default:
             throw new Error(`Unknown provider: ${provider}`);
@@ -110,31 +119,40 @@ function createModelForProvider(model: DetailedModel): LanguageModel {
 
 export function isModelConfigured(): boolean {
     const provider = configService.getActiveProvider();
+    if (provider === "ollama") return true;
     return configService.isProviderConfigured(provider);
 }
 
-export function getModelInfo(modelId?: string): {
+export async function getModelInfo(modelId?: string): Promise<{
     provider: ProviderType;
     model: string;
     configured: boolean;
-} {
-    const model = modelId ? MODELS.find((m) => m.id === modelId) : undefined;
+}> {
+    const ollamaUrl = configService.getProviderApiKey("ollama") || "http://localhost:11434";
+    const ollamaModels = await getOllamaModels(ollamaUrl);
+    const allModels = [...MODELS, ...ollamaModels];
+    
+    const model = modelId ? allModels.find((m) => m.id === modelId) : undefined;
     const activeProvider = configService.getActiveProvider();
 
     const selectedModel =
         model ||
-        MODELS.find((m) => m.provider.id === activeProvider) ||
+        allModels.find((m) => m.provider.id === activeProvider) ||
         MODELS[0];
 
     return {
         provider: selectedModel.provider.id as ProviderType,
         model: selectedModel.id,
-        configured: configService.isProviderConfigured(
+        configured: selectedModel.provider.id === "ollama" ? true : configService.isProviderConfigured(
             selectedModel.provider.id as ProviderType,
         ),
     };
 }
 
-export function getAllVisibleModels(): DetailedModel[] {
-    return MODELS;
+export async function getAllVisibleModels(): Promise<DetailedModel[]> {
+    const ollamaUrl = configService.getProviderApiKey("ollama") || "http://localhost:11434";
+    const ollamaModels = await getOllamaModels(ollamaUrl);
+    // Prioritize configured models or active ones?
+    // For now, just append Ollama models to the list
+    return [...MODELS, ...ollamaModels];
 }

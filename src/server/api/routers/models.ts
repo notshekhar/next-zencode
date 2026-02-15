@@ -3,7 +3,7 @@ import { createTRPCRouter, publicProcedure } from "../trpc";
 
 export const modelsRouter = createTRPCRouter({
     list: publicProcedure.query(async () => {
-        const models = getAllVisibleModels();
+        const models = await getAllVisibleModels();
         return { models };
     }),
 });

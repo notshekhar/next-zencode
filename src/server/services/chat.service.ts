@@ -100,7 +100,7 @@ export async function createChatStream(options: ChatStreamOptions) {
         clearTasks();
     }
 
-    const model = getModel(modelId);
+    const model = await getModel(modelId);
 
     let allMessages = messages && messages.length > 0 ? messages : null;
     if (!allMessages) {

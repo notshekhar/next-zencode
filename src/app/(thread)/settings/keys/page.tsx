@@ -44,13 +44,10 @@ export default function ApiKeysPage() {
                     onClick={() => router.back()}
                     className="rounded-full shrink-0 -ml-2"
                 >
-                    <ArrowLeft className="h-5 w-5" />
+                    <ArrowLeft className="h-10 w-10" />
                 </Button>
                 <div className="pt-1">
                     <h1 className="text-3xl font-bold tracking-tight">API Settings</h1>
-                    <p className="text-muted-foreground mt-1">
-                        Configure your AI providers and manage your API keys.
-                    </p>
                 </div>
             </div>
 

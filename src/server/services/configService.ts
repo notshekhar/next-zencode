@@ -349,12 +349,12 @@ export const PROVIDER_INFO: Record<
     },
 };
 
-export const AVAILABLE_PROVIDERS: ProviderType[] = ["google", "groq"];
+export const AVAILABLE_PROVIDERS: ProviderType[] = ["google", "groq", "ollama"];
 export const COMING_SOON_PROVIDERS: ProviderType[] = [
     "openai",
     "anthropic",
-    "ollama",
 ];
+// Safe readonly commands
 
 // Safe readonly commands
 export const SAFE_READONLY_COMMANDS = [

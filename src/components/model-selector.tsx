@@ -37,7 +37,8 @@ export function ModelSelector({ disabled }: { disabled?: boolean }) {
 
             // Set default model if none selected
             if (!selectedModelId && data.models.length > 0) {
-                setSelectedModelId(data.models[0].id);
+                const defaultModel = data.models.find((m) => m.isDefault);
+                setSelectedModelId(defaultModel?.id || data.models[0].id);
             }
         }
         if (error) {
