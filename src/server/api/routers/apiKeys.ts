@@ -21,6 +21,7 @@ export const apiKeysRouter = createTRPCRouter({
             connected: configService.isProviderConfigured(id),
             available: AVAILABLE_PROVIDERS.includes(id),
             comingSoon: COMING_SOON_PROVIDERS.includes(id),
+            apiKey: configService.getProviderApiKey(id),
         }));
         return { providers };
     }),

@@ -14,6 +14,7 @@
     },
     "dependencies": {
         "@ai-sdk/google": "^3.0.24",
+        "@ai-sdk/groq": "^3.0.24",
         "@ai-sdk/react": "^3.0.81",
         "@radix-ui/react-avatar": "^1.1.11",
         "@radix-ui/react-collapsible": "^1.1.12",

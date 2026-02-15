@@ -46,7 +46,7 @@ export function ConnectButton() {
                             <Plug className="h-3.5 w-3.5" />
                             <span className="hidden sm:inline">Connect</span>
                             {connectedCount > 0 && (
-                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-emerald-950 px-1 text-[10px] font-medium text-emerald-400">
+                                <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-primary px-1 text-[10px] font-medium text-primary-foreground">
                                     {connectedCount}
                                 </span>
                             )}
@@ -109,6 +109,7 @@ function ProviderCard({
         connected: boolean;
         available: boolean;
         comingSoon: boolean;
+        apiKey?: string;
     };
     onSetKey: (key: string) => void;
     onRemoveKey: () => void;
@@ -126,6 +127,11 @@ function ProviderCard({
         }
     }, [apiKey, onSetKey]);
 
+    const handleEdit = () => {
+        setApiKey(provider.apiKey || "");
+        setEditing(true);
+    };
+
     // Extract URL from urlHint
     const urlMatch = provider.urlHint.match(/https?:\/\/\S+/);
     const url = urlMatch ? urlMatch[0] : undefined;
@@ -136,7 +142,7 @@ function ProviderCard({
                 provider.comingSoon
                     ? "opacity-50 pointer-events-none"
                     : provider.connected
-                      ? "border-emerald-800 bg-emerald-950"
+                      ? "border-primary bg-secondary"
                       : "border-border hover:border-muted-foreground"
             }`}
         >
@@ -149,7 +155,7 @@ function ProviderCard({
                         </span>
                     )}
                     {provider.connected && (
-                        <Check className="h-3.5 w-3.5 text-emerald-400" />
+                        <Check className="h-3.5 w-3.5 text-primary" />
                     )}
                 </div>
                 <div className="flex items-center gap-1">
@@ -179,10 +185,16 @@ function ProviderCard({
             <p className="text-xs text-muted-foreground">
                 {provider.description}
             </p>
+            
+            {provider.connected && !editing && provider.apiKey && (
+                <div className="text-[10px] text-muted-foreground font-mono bg-background opacity-20 px-1.5 py-0.5 rounded w-fit">
+                    {provider.apiKey.slice(0, 3)}...{provider.apiKey.slice(-4)}
+                </div>
+            )}
 
             {!provider.connected || editing ? (
-                <div className="flex gap-2">
-                    <div className="relative flex-1">
+                <div className="flex flex-col gap-2">
+                    <div className="relative">
                         <Input
                             type={showKey ? "text" : "password"}
                             placeholder="Enter API key..."
@@ -203,38 +215,40 @@ function ProviderCard({
                             )}
                         </button>
                     </div>
-                    <Button
-                        size="sm"
-                        className="h-8 text-xs"
-                        onClick={handleSave}
-                        disabled={!apiKey.trim() || isSaving}
-                    >
-                        {isSaving ? (
-                            <Loader2 className="h-3 w-3 animate-spin" />
-                        ) : (
-                            "Save"
+                    <div className="flex justify-end gap-2">
+                        {editing && (
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-7 text-xs"
+                                onClick={() => {
+                                    setEditing(false);
+                                    setApiKey("");
+                                }}
+                            >
+                                Cancel
+                            </Button>
                         )}
-                    </Button>
-                    {editing && (
                         <Button
-                            variant="ghost"
                             size="sm"
-                            className="h-8 text-xs"
-                            onClick={() => {
-                                setEditing(false);
-                                setApiKey("");
-                            }}
+                            className="h-7 text-xs"
+                            onClick={handleSave}
+                            disabled={!apiKey.trim() || isSaving}
                         >
-                            Cancel
+                            {isSaving ? (
+                                <Loader2 className="h-3 w-3 animate-spin" />
+                            ) : (
+                                "Save"
+                            )}
                         </Button>
-                    )}
+                    </div>
                 </div>
             ) : (
                 <Button
                     variant="outline"
                     size="sm"
                     className="h-7 text-xs w-fit"
-                    onClick={() => setEditing(true)}
+                    onClick={handleEdit}
                 >
                     Update key
                 </Button>
