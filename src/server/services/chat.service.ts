@@ -58,6 +58,7 @@ export interface ChatStreamOptions {
     signal?: AbortSignal;
     mode?: AgentMode;
     selectedSkillNames?: string[];
+    modelId?: string;
 }
 
 export async function createChatStream(options: ChatStreamOptions) {
@@ -69,6 +70,7 @@ export async function createChatStream(options: ChatStreamOptions) {
         signal,
         mode = "build",
         selectedSkillNames = [],
+        modelId,
     } = options;
 
     if (!isModelConfigured()) {
@@ -98,7 +100,7 @@ export async function createChatStream(options: ChatStreamOptions) {
         clearTasks();
     }
 
-    const model = getModel();
+    const model = getModel(modelId);
 
     let allMessages = messages && messages.length > 0 ? messages : null;
     if (!allMessages) {

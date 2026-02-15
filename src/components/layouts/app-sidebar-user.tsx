@@ -16,6 +16,7 @@ import {
     User,
     Coins,
     Plus,
+    Key,
 } from "lucide-react";
 import { useTheme } from "next-themes";
 import Link from "next/link";
@@ -72,6 +73,12 @@ export function AppSidebarUser() {
                             <Command className="size-4 text-foreground" />
                             <span>{"Keyboard Shortcuts"}</span>
                         </DropdownMenuItem>
+                        <Link href="/settings/keys">
+                            <DropdownMenuItem className="cursor-pointer">
+                                <Key className="size-4 text-foreground" />
+                                <span>{"API Settings"}</span>
+                            </DropdownMenuItem>
+                        </Link>
                         <DropdownMenuItem
                             onClick={() => {
                                 window.open(

@@ -10,7 +10,7 @@ import * as fs from "fs";
 import * as path from "path";
 
 // Types
-export type ProviderType = "google" | "openai" | "anthropic" | "ollama";
+export type ProviderType = "google" | "openai" | "anthropic" | "groq" | "ollama";
 export type PermissionLevel = "ask" | "allow" | "deny";
 
 export interface ProviderConfig {
@@ -337,6 +337,11 @@ export const PROVIDER_INFO: Record<
         description: "Claude AI models",
         urlHint: "Get API key: https://console.anthropic.com/",
     },
+    groq: {
+        name: "Groq",
+        description: "Ultra-fast Llama 3 models",
+        urlHint: "Get API key: https://console.groq.com/keys",
+    },
     ollama: {
         name: "Ollama (Local)",
         description: "Run models locally with Ollama",
@@ -344,7 +349,7 @@ export const PROVIDER_INFO: Record<
     },
 };
 
-export const AVAILABLE_PROVIDERS: ProviderType[] = ["google"];
+export const AVAILABLE_PROVIDERS: ProviderType[] = ["google", "groq"];
 export const COMING_SOON_PROVIDERS: ProviderType[] = [
     "openai",
     "anthropic",

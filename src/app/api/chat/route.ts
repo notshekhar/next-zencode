@@ -13,6 +13,7 @@ interface ChatRequestBody {
     abortSignal?: AbortSignal; // Note: Next.js Request signal is usually used, but we might pass it differently
     mode?: AgentMode;
     selectedSkillNames?: string[];
+    modelId?: string;
 }
 
 export async function POST(req: Request) {
@@ -43,6 +44,7 @@ export async function POST(req: Request) {
             signal: req.signal,
             mode: mode || "build",
             selectedSkillNames: selectedSkillNames || [],
+            modelId: body.modelId,
         });
 
         return createUIMessageStreamResponse({ stream });

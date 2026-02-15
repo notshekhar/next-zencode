@@ -7,9 +7,10 @@ export const openShortcutsPopupAtom = atom<boolean>(false);
 export interface Model {
     id: string;
     name: string;
+    providerModelId: string;
     provider: {
         id: string;
-        attachment: boolean;
+        limitAttachments: boolean;
         limit: {
             context: number;
         };
@@ -21,7 +22,7 @@ export interface Model {
 // Model selection atoms
 export const selectedModelAtom = atomWithStorage<string>(
     "oboe-selected-model",
-    "gemini-3-flash-preview",
+    "gemini-1.5-flash",
 );
 
 export const modelsAtom = atom<Model[]>([]);

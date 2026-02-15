@@ -62,9 +62,10 @@ export interface ToolCall {
 export interface DetailedModel {
     id: string;
     name: string;
+    providerModelId: string;
     provider: {
         id: string;
-        attachment: boolean;
+        limitAttachments: boolean;
         limit: {
             context: number;
         };

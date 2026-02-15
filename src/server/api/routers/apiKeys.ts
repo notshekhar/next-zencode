@@ -30,12 +30,21 @@ export const apiKeysRouter = createTRPCRouter({
     setKey: publicProcedure
         .input(
             z.object({
-                provider: z.enum(["google", "openai", "anthropic", "ollama"]),
+                provider: z.enum([
+                    "google",
+                    "openai",
+                    "anthropic",
+                    "ollama",
+                    "groq",
+                ]),
                 apiKey: z.string().min(1),
             }),
         )
         .mutation(({ input }) => {
-            configService.setProviderApiKey(input.provider, input.apiKey);
+            configService.setProviderApiKey(
+                input.provider as ProviderType,
+                input.apiKey,
+            );
             return { success: true };
         }),
 
@@ -43,14 +52,21 @@ export const apiKeysRouter = createTRPCRouter({
     removeKey: publicProcedure
         .input(
             z.object({
-                provider: z.enum(["google", "openai", "anthropic", "ollama"]),
+                provider: z.enum([
+                    "google",
+                    "openai",
+                    "anthropic",
+                    "ollama",
+                    "groq",
+                ]),
             }),
         )
         .mutation(({ input }) => {
             const config = configService.load();
-            if (config.providers[input.provider]) {
-                delete config.providers[input.provider]!.apiKey;
-                config.providers[input.provider]!.enabled = false;
+            const provider = input.provider as ProviderType;
+            if (config.providers[provider]) {
+                delete config.providers[provider]!.apiKey;
+                config.providers[provider]!.enabled = false;
                 configService.save(config);
             }
             return { success: true };

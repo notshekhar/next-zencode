@@ -1,65 +1,71 @@
 import { google } from "@ai-sdk/google";
+import { groq } from "@ai-sdk/groq";
 import type { LanguageModel } from "ai";
 import { configService, type ProviderType } from "./configService";
 
 import { DetailedModel } from "../shared/types";
 
-const MODEL_CONFIGS: Record<ProviderType, DetailedModel> = {
-    google: {
-        id: "gemini-3-flash-preview",
+const MODELS: DetailedModel[] = [
+    {
+        id: "gemini-3-flash",
         name: "Gemini 3 Flash",
+        providerModelId: "gemini-3-flash-preview",
         provider: {
             id: "google",
-            attachment: true,
+            limitAttachments: true,
+            limit: { context: 1000000 },
+        },
+        description: "Next-gen flash model from Google",
+        iconUrl: "https://models.dev/logos/google.svg",
+    },
+    {
+        id: "gemini-3-pro",
+        name: "Gemini 3 Pro",
+        providerModelId: "gemini-3-pro-preview",
+        provider: {
+            id: "google",
+            limitAttachments: true,
             limit: { context: 1000000 },
         },
         description: "Fast and efficient model from Google",
         iconUrl: "https://models.dev/logos/google.svg",
     },
-    openai: {
-        id: "gpt-4o",
-        name: "GPT-4o",
+    {
+        id: "groq/gpt-oss-120b",
+        name: "GPT OSS 120B",
+        providerModelId: "openai/gpt-oss-120b",
         provider: {
-            id: "openai",
-            attachment: true,
+            id: "groq",
+            limitAttachments: false,
             limit: { context: 128000 },
         },
-        description: "Most capable model from OpenAI",
-        iconUrl: "https://models.dev/logos/openai.svg",
+        description: "Open Source 120B model on Groq",
+        iconUrl: "https://models.dev/logos/groq.svg",
     },
-    anthropic: {
-        id: "claude-opus-4.5",
-        name: "Claude Opus 4.5",
-        provider: {
-            id: "anthropic",
-            attachment: true,
-            limit: { context: 200000 },
-        },
-        description: "High-intelligence model from Anthropic",
-        iconUrl: "https://models.dev/logos/anthropic.svg",
-    },
-    ollama: {
-        id: "llama3.2",
-        name: "Llama 3.2",
-        provider: {
-            id: "ollama",
-            attachment: false,
-            limit: { context: 32000 },
-        },
-        description: "Local model running via Ollama",
-        iconUrl: "https://models.dev/logos/llama.svg",
-    },
-};
+];
 
-export function getModel(): LanguageModel {
-    const provider = configService.getActiveProvider();
-    const apiKey = configService.getProviderApiKey(provider);
+export function getModel(modelId?: string): LanguageModel {
+    const model = modelId ? MODELS.find((m) => m.id === modelId) : undefined;
 
-    if (apiKey) {
-        setProviderEnvKey(provider, apiKey);
+    let selectedModel: DetailedModel;
+
+    if (model) {
+        selectedModel = model;
+    } else {
+        // Fallback to active provider's first model if no ID or ID not found
+        const activeProvider = configService.getActiveProvider();
+        selectedModel =
+            MODELS.find((m) => m.provider.id === activeProvider) || MODELS[0];
     }
 
-    return createModelForProvider(provider);
+    const providerId = selectedModel.provider.id as ProviderType;
+    const apiKey = configService.getProviderApiKey(providerId);
+
+    if (apiKey) {
+        setProviderEnvKey(providerId, apiKey);
+    }
+
+    return createModelForProvider(selectedModel);
 }
 
 function setProviderEnvKey(provider: ProviderType, apiKey: string): void {
@@ -67,6 +73,7 @@ function setProviderEnvKey(provider: ProviderType, apiKey: string): void {
         google: "GOOGLE_GENERATIVE_AI_API_KEY",
         openai: "OPENAI_API_KEY",
         anthropic: "ANTHROPIC_API_KEY",
+        groq: "GROQ_API_KEY",
         ollama: "OLLAMA_BASE_URL",
     };
 
@@ -76,12 +83,16 @@ function setProviderEnvKey(provider: ProviderType, apiKey: string): void {
     }
 }
 
-function createModelForProvider(provider: ProviderType): LanguageModel {
-    const config = MODEL_CONFIGS[provider];
+function createModelForProvider(model: DetailedModel): LanguageModel {
+    const provider = model.provider.id as ProviderType;
+    const targetModelId = model.providerModelId;
 
     switch (provider) {
         case "google":
-            return google(config.id);
+            return google(targetModelId);
+
+        case "groq":
+            return groq(targetModelId);
 
         case "openai":
             throw new Error("OpenAI provider not yet implemented");
@@ -102,21 +113,28 @@ export function isModelConfigured(): boolean {
     return configService.isProviderConfigured(provider);
 }
 
-export function getModelInfo(): {
+export function getModelInfo(modelId?: string): {
     provider: ProviderType;
     model: string;
     configured: boolean;
 } {
-    const provider = configService.getActiveProvider();
-    const config = MODEL_CONFIGS[provider];
+    const model = modelId ? MODELS.find((m) => m.id === modelId) : undefined;
+    const activeProvider = configService.getActiveProvider();
+
+    const selectedModel =
+        model ||
+        MODELS.find((m) => m.provider.id === activeProvider) ||
+        MODELS[0];
 
     return {
-        provider,
-        model: config.id,
-        configured: configService.isProviderConfigured(provider),
+        provider: selectedModel.provider.id as ProviderType,
+        model: selectedModel.id,
+        configured: configService.isProviderConfigured(
+            selectedModel.provider.id as ProviderType,
+        ),
     };
 }
 
 export function getAllVisibleModels(): DetailedModel[] {
-    return Object.values(MODEL_CONFIGS);
+    return MODELS;
 }
