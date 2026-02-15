@@ -57,7 +57,7 @@ const NewThreadButton = ({ onClick }: { onClick: () => void }) => {
     return (
         <Button
             variant="ghost"
-            className="w-full justify-start gap-2 h-9 px-2 text-muted-foreground hover:text-foreground"
+            className="w-full justify-start gap-2 h-9 px-2 text-muted-foreground hover:text-foreground border border-sidebar-border shadow-sm hover:bg-sidebar-accent transition-all"
             onClick={onClick}
         >
             <WriteIcon className="h-4 w-4" />
@@ -164,6 +164,12 @@ export function AppSidebarThreads() {
         return (
             <SidebarGroup>
                 <div className="px-2 pb-2 flex flex-col gap-2">
+                    <NewThreadButton
+                        onClick={() => {
+                            router.push("/");
+                            router.refresh();
+                        }}
+                    />
                     <div className="relative">
                         <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                         <Input
@@ -173,12 +179,6 @@ export function AppSidebarThreads() {
                             onChange={(e) => setSearchQuery(e.target.value)}
                         />
                     </div>
-                    <NewThreadButton
-                        onClick={() => {
-                            router.push("/");
-                            router.refresh();
-                        }}
-                    />
                 </div>
                 <SidebarGroupContent className="group-data-[collapsible=icon]:hidden group/threads">
                     <SidebarMenu>
@@ -203,6 +203,12 @@ export function AppSidebarThreads() {
     return (
         <>
             <div className="px-2 pb-2 flex flex-col gap-2">
+                <NewThreadButton
+                    onClick={() => {
+                        router.push("/");
+                        router.refresh();
+                    }}
+                />
                 <div className="relative">
                     <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
                     <Input
@@ -212,12 +218,6 @@ export function AppSidebarThreads() {
                         onChange={(e) => setSearchQuery(e.target.value)}
                     />
                 </div>
-                <NewThreadButton
-                    onClick={() => {
-                        router.push("/");
-                        router.refresh();
-                    }}
-                />
             </div>
 
             {searchQuery ? (
