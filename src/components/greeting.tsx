@@ -6,23 +6,15 @@ import Link from "next/link";
 import { Zap, Target, Clock } from "lucide-react";
 
 const greetingMessageKeys = [
-    "goodMorning",
-    "goodAfternoon",
-    "goodEvening",
-    "niceToSeeYouAgain",
-    "whatAreYouWorkingOnToday",
-    "letMeKnowWhenYoureReadyToBegin",
-    "whatAreYourThoughtsToday",
-    "whereWouldYouLikeToStart",
-    "whatAreYouThinking",
-];
-
-// Suggested questions for users to get started
-const suggestedQuestions = [
-    "How does blockchain mining work?",
-    "What is cryptocurrency?",
-    "Explain quantum computing in simple terms",
-    "Help me write a professional email",
+    "Good Morning",
+    "Good Afternoon",
+    "Good Evening",
+    "Nice To See You Again",
+    "What Are You Working On Today",
+    "Let Me Know When You're Ready To Begin",
+    "What Are Your Thoughts Today",
+    "Where Would You Like To Start",
+    "What Are You Thinking",
 ];
 
 export function Greeting(props: {
