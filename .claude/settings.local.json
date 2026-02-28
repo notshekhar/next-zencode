@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "mcp__context7__resolve-library-id",
+      "Bash(wc:*)",
+      "mcp__context7__query-docs",
+      "Bash(npx tsc:*)",
+      "Bash(bun add:*)",
+      "Bash(bunx tsc:*)",
+      "Bash(bun run:*)",
+      "Bash(bun --eval:*)"
+    ]
+  }
+}
